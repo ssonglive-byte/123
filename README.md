@@ -29,6 +29,24 @@ python3 scripts/fetch_shorts_top10.py
 - `thumbnail_url`: 썸네일 URL
 - `video_id`, `url`: 참고용 영상 ID/링크
 
+## YouTube Shorts TOP 10 (재테크 / 살림 / 육아)
+
+`scripts/fetch_shorts_top10_finance_home_parenting.py`는 같은 방식으로
+"재테크", "살림", "육아" 카테고리의 오늘 업로드된 인기 Shorts를 조회수 기준
+TOP 10으로 뽑아 `data/top10_shorts_finance_home_parenting.json`에 저장합니다.
+
+```bash
+export YOUTUBE_API_KEY="your-api-key-here"
+python3 scripts/fetch_shorts_top10_finance_home_parenting.py
+```
+
+- `--region` (기본값 `KR`): 검색 지역 코드
+- `--output` (기본값 `data/top10_shorts_finance_home_parenting.json`): 결과 저장 경로
+- 카테고리별 검색 키워드: 재테크(재테크/부업/짠테크), 살림(살림/살림꿀팁/집안일),
+  육아(육아/육아꿀팁/육아템)
+- 저장 항목은 위와 동일(`title`, `view_count`, `thumbnail_url`)하며, 어떤
+  카테고리에 매칭됐는지 나타내는 `category` 필드가 추가로 포함됩니다.
+
 ## 쿠팡파트너스 상품 매칭
 
 `scripts/enrich_coupang_products.py`는 위 결과 파일의 영상 제목에서 키워드를
