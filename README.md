@@ -46,8 +46,37 @@ python3 scripts/enrich_coupang_products.py
 - 키워드 추출은 정식 형태소 분석기 없이 해시태그/명사 후보를 휴리스틱으로 뽑는 방식이라 일부 부정확할 수 있습니다.
 - `--input`, `--output`으로 대상 JSON 경로를 지정할 수 있습니다 (기본은 같은 파일에 덮어씁니다).
 
+## Higgsfield 영상 자동 생성
+
+`scripts/generate_higgsfield_videos.py`는 수집된 각 영상의 썸네일을 원본
+이미지로 사용하고, 제목의 분위기를 자동 분석한 프롬프트로 Higgsfield API를
+호출해 짧은 영상을 생성합니다 (image-to-video). 결과는 각 영상 항목에
+`higgsfield_video`(model, prompt, video_url) 필드로 추가됩니다.
+
+```bash
+pip install higgsfield-client
+export HF_API_KEY="your-api-key"
+export HF_API_SECRET="your-api-secret"
+python3 scripts/generate_higgsfield_videos.py --limit 3   # 먼저 소량으로 테스트 권장
+```
+
+- `--dry-run`: API를 호출하지 않고 자동 생성된 프롬프트만 미리 확인 (크레딧 소모 없음)
+- `--model` (기본값 `dop-turbo`): 사용할 Higgsfield 모델 ID
+- `--limit`: 앞에서부터 N개 영상만 처리 (크레딧 절약)
+- 프롬프트 분위기는 제목의 키워드(메이크업/뷰티, 살림/청소, 인테리어, 여행 등)에 따라
+  자동으로 톤을 다르게 생성합니다. 매칭되는 규칙이 없으면 기본 톤을 사용합니다.
+
+Higgsfield API 키는 https://cloud.higgsfield.ai 대시보드에서 발급받습니다.
+Higgsfield의 공개 REST API는 YouTube/Coupang API보다 문서화가 덜 정리되어
+있어, 공식 SDK(`higgsfield-ai/higgsfield-client`, `higgsfield-ai/higgsfield-js`)
+예제를 기준으로 작성했습니다. 모델 카탈로그나 파라미터명이 바뀌면 스크립트
+상단의 `VIDEO_ENDPOINT`/`MODEL_ID`/`build_prompt()`를 대시보드 최신 문서에
+맞게 조정하세요.
+
 ## 주의사항
 
-- YouTube Data API 키, Coupang Partners ACCESS_KEY/SECRET_KEY는 절대 저장소에 커밋하지 마세요. 환경변수로만 전달하세요.
+- YouTube Data API 키, Coupang Partners ACCESS_KEY/SECRET_KEY, Higgsfield API 키는
+  절대 저장소에 커밋하지 마세요. 환경변수로만 전달하세요.
 - YouTube Data API의 일일 쿼터 제한이 있습니다 (기본 10,000 units/day).
 - Coupang Partners API로 얻은 링크로 발생한 수익은 발급받은 계정의 파트너스 ID에 귀속되므로, 본인 계정의 키만 사용하세요.
+- Higgsfield 영상 생성은 크레딧을 소모합니다. `--dry-run`으로 프롬프트를 먼저 확인한 뒤 `--limit`으로 소량 테스트를 권장합니다.
