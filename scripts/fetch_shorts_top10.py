@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 Fetch today's most popular YouTube Shorts filtered to the
-'꿀템' (life-hack/deal finds) and '쿠팡파트너스' (Coupang Partners
-affiliate) category, and save the top 10 by view count.
+'꿀템' (life-hack/deal finds) category, and save the top 10 by view count.
 
 Requires a YouTube Data API v3 key, e.g.:
 
@@ -23,7 +22,7 @@ import urllib.parse
 import urllib.request
 
 API_BASE = "https://www.googleapis.com/youtube/v3"
-SEARCH_KEYWORDS = ["꿀템", "쿠팡파트너스"]
+SEARCH_KEYWORDS = ["꿀템"]
 SHORTS_MAX_SECONDS = 60  # YouTube Shorts are <= 60s
 DEFAULT_REGION = "KR"
 

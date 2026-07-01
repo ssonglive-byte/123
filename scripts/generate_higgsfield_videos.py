@@ -18,7 +18,7 @@ Requires the official Higgsfield Python SDK and API credentials:
 Use --dry-run to preview the generated prompts without spending API credits.
 
 NOTE: Higgsfield's public REST API is less consistently documented than
-YouTube/Coupang's. This script follows the endpoint/parameter shape shown
+YouTube's. This script follows the endpoint/parameter shape shown
 in the official SDKs (higgsfield-ai/higgsfield-client, higgsfield-ai/higgsfield-js)
 as of this writing. If Higgsfield changes their model catalog or parameter
 names, update MODEL_ID / VIDEO_ENDPOINT / build_arguments() below to match
@@ -57,11 +57,9 @@ def pick_mood(title: str) -> str:
 
 def build_prompt(video: dict) -> str:
     mood = pick_mood(video["title"])
-    products = video.get("coupang_products") or []
-    product_line = f', featuring a {products[0]["product_name"]}' if products else ""
     return (
         f"{mood}, vertical 9:16 short-form video inspired by the Korean YouTube "
-        f'Shorts titled "{video["title"]}"{product_line}, smooth natural motion'
+        f'Shorts titled "{video["title"]}", smooth natural motion'
     )
 
 
