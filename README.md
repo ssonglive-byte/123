@@ -62,6 +62,29 @@ python3 scripts/enrich_coupang_products.py
 
 - Coupang Partners Open API 키는 https://partners.coupang.com (마이페이지 > Open API 발급)에서 발급받습니다.
 - 키워드 추출은 정식 형태소 분석기 없이 해시태그/명사 후보를 휴리스틱으로 뽑는 방식이라 일부 부정확할 수 있습니다.
+- `--keywords-only`: Coupang API 호출 없이 각 영상에 `keywords` 필드만 먼저 추출/저장합니다.
+  Coupang Partners API 키 발급 전에 미리 실행해두고, 키 발급 후 옵션 없이 다시 실행하면
+  `coupang_products`가 채워집니다.
+
+## 애드픽(AdPick) 상품 매칭
+
+`scripts/enrich_adpick_products.py`는 애드픽 "쇼핑메이트 추천 제품 JSON API"
+(`https://adpick.co.kr/apis/sdk_shopping.php?affid=...`)에서 전체 추천 상품
+목록을 가져온 뒤, 각 영상의 키워드와 상품명/판매처명을 매칭해 관련도 TOP 3를
+`adpick_products`(상품명 `product_name`, 가격 `price`, 구매링크 `product_url`)
+필드로 추가합니다.
+
+```bash
+export ADPICK_AFFID="your-affid"
+python3 scripts/enrich_adpick_products.py
+```
+
+- `affid`는 https://adpick.co.kr 로그인 후 광고툴/API > "쇼핑메이트 추천 제품
+  JSON API" 페이지에서 확인할 수 있습니다.
+- 이 API는 Coupang Partners와 달리 키워드 검색 파라미터가 없고, 애드픽이 선정한
+  고정 추천 상품 목록만 반환합니다. 따라서 매칭은 API 자체가 아니라 이 스크립트가
+  로컬에서 텍스트 매칭으로 수행하며, 영상 키워드와 겹치는 상품이 없으면 해당
+  영상의 `adpick_products`는 3개보다 적거나 빈 배열일 수 있습니다.
 - `--input`, `--output`으로 대상 JSON 경로를 지정할 수 있습니다 (기본은 같은 파일에 덮어씁니다).
 
 ## Higgsfield 영상 자동 생성
