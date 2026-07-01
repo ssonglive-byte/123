@@ -73,6 +73,21 @@ Higgsfield의 공개 REST API는 YouTube/Coupang API보다 문서화가 덜 정�
 상단의 `VIDEO_ENDPOINT`/`MODEL_ID`/`build_prompt()`를 대시보드 최신 문서에
 맞게 조정하세요.
 
+## 생성된 영상 로컬(D 드라이브 등) 저장
+
+`scripts/save_videos_to_disk.py`는 `higgsfield_video.video_url`이 채워진 영상들을
+다운로드해서, 제목/프롬프트가 담긴 텍스트 파일과 함께 지정한 폴더에 저장합니다.
+
+```bash
+python3 scripts/save_videos_to_disk.py --save-dir "D:\youtube_shorts"
+```
+
+- 이 스크립트는 **저장 대상 드라이브가 실제로 연결된 컴퓨터에서 직접 실행**해야 합니다.
+  (클라우드/원격 세션 컨테이너에는 로컬 D 드라이브가 없어서, Claude가 대신 이 작업을 수행할 수는 없습니다.)
+- 파일당 두 개가 저장됩니다: `01_영상제목.mp4`(영상), `01_영상제목.txt`(제목/조회수/원본 링크/생성 프롬프트=스크립트)
+- `--dry-run`으로 실제 다운로드 없이 저장될 파일 목록만 미리 확인할 수 있습니다.
+- macOS/Linux에서는 `--save-dir ~/youtube_shorts`처럼 일반 경로를 사용하세요.
+
 ## 주의사항
 
 - YouTube Data API 키, Coupang Partners ACCESS_KEY/SECRET_KEY, Higgsfield API 키는
