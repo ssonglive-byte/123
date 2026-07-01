@@ -11,6 +11,10 @@ Requires Coupang Partners Open API credentials:
     python3 scripts/enrich_coupang_products.py
 
 Credentials are issued at https://partners.coupang.com (마이페이지 > Open API 발급).
+
+If credentials aren't available yet, run with --keywords-only to attach just
+the extracted 'keywords' field to each video (no API calls), then re-run
+without the flag later once credentials are ready to fill in coupang_products.
 """
 
 import argparse
@@ -133,13 +137,20 @@ def main():
         help="Path to the collected videos JSON (default: data/top10_shorts.json)",
     )
     parser.add_argument("--output", default=None, help="Output path (default: overwrite --input)")
+    parser.add_argument(
+        "--keywords-only",
+        action="store_true",
+        help="Only extract/attach 'keywords' per video; skip Coupang API calls "
+        "(useful before Partners API credentials are issued).",
+    )
     args = parser.parse_args()
 
     access_key = os.environ.get("COUPANG_ACCESS_KEY")
     secret_key = os.environ.get("COUPANG_SECRET_KEY")
-    if not access_key or not secret_key:
+    if not args.keywords_only and (not access_key or not secret_key):
         print(
-            "Error: set COUPANG_ACCESS_KEY and COUPANG_SECRET_KEY environment variables first.",
+            "Error: set COUPANG_ACCESS_KEY and COUPANG_SECRET_KEY environment variables first "
+            "(or pass --keywords-only to skip product search).",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -152,6 +163,9 @@ def main():
     for video in data.get("videos", []):
         keywords = extract_keywords(video["title"])
         video["keywords"] = keywords
+
+        if args.keywords_only:
+            continue
 
         products = []
         seen_names = set()
@@ -170,7 +184,12 @@ def main():
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"Updated {len(data.get('videos', []))} videos with Coupang product data -> {output_path}")
+    if args.keywords_only:
+        print(f"Updated {len(data.get('videos', []))} videos with keywords only -> {output_path}")
+        print("Run again without --keywords-only (with COUPANG_ACCESS_KEY/SECRET_KEY set) "
+              "to fill in coupang_products.")
+    else:
+        print(f"Updated {len(data.get('videos', []))} videos with Coupang product data -> {output_path}")
 
 
 if __name__ == "__main__":
